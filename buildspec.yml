@@ -1,0 +1,14 @@
+version: 0.2
+# Note: env variables are set on each stage in CodePipeline. so they are not hardcoded in this script.
+# Variables are:
+# REGION
+# STAGE
+phases:
+  pre_build:
+    commands:
+      - echo Get environment variables for deployment...
+      - aws ssm get-parameter --name /UanifyExeni/DeployEnviroment/Database/$STAGE --query Parameter.Value --with-decryption --region $REGION --output text > liquibase/liquibase.properties
+  build:
+    commands:
+      - echo Execute Liquibase changes...
+      - cd liquibase && liquibase update
